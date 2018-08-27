@@ -77,8 +77,20 @@ Spaceship::Spaceship::Spaceship(int sceneHeight) : QGraphicsPixmapItem(0)
 
 void Spaceship::advance(int phase)
 {
-    if (phase) {
+    if (!phase) {
+        foreach(QGraphicsItem* item, collidingItems()) {
+            Asteroid* obj = qgraphicsitem_cast<Asteroid*>(item);
+            if (obj) {
+                item->setData(0, true);
+                setData(0, true);
+            }
+        }
+    }
+    else {
         moveBy(xspeed, 0);
+        if (data(0).toBool()) {
+            delete this;
+        }
     }
 }
 
