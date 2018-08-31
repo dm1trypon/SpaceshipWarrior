@@ -3,7 +3,7 @@
 #include <QKeyEvent>
 
 #define CIRCLE_SIZE 50
-#define SPACESHIP_SPEED 3
+#define SPACESHIP_SPEED 6
 #define BULLET_LENGHT 10
 #define BULLET_SPEED 4
 
@@ -15,9 +15,10 @@ Widget::Widget(QWidget *parent) :
     scene = new QGraphicsScene(0, 0, 800, 600, this);
     scene->setStickyFocus(true);
     scene->setBackgroundBrush(QBrush(Qt::black));
+    QPixmap pim("E:/PROJECT/QT/animation-game/images/space.jpg");
+    scene->setBackgroundBrush(pim.scaled(800,600,Qt::IgnoreAspectRatio,Qt::SmoothTransformation));
     ui->graphicsView->setScene(scene);
     scene->addRect(scene->sceneRect());
-
     scene->addItem(new Spaceship(scene->height()));
 
     animationTimer = new QTimer(this);
@@ -51,7 +52,7 @@ void Asteroid::advance(int phase)
 {
     if (phase) {
         moveBy(0, yspeed);
-        if (data(0).toBool()) {
+        if ((data(0).toBool()) || (Asteroid::y() > 800)) {
             delete this;
         }
     }
@@ -87,7 +88,17 @@ void Spaceship::advance(int phase)
         }
     }
     else {
-        moveBy(xspeed, 0);
+        if ((Spaceship::x() <= 700) && (Spaceship::x() >= -20)) {
+            moveBy(xspeed, 0);
+        }
+        else {
+            if ((Spaceship::x() >= 700)) {
+                Spaceship::setPos(699, 600 - pixmap().height());
+            }
+            if ((Spaceship::x() <= -20)) {
+                Spaceship::setPos(-19, 600 - pixmap().height());
+            }
+        }
         if (data(0).toBool()) {
             delete this;
         }
@@ -145,7 +156,7 @@ void Bullet::advance(int phase)
     }
     else {
         moveBy(0, -yspeed);
-        if (data(0).toBool()) {
+        if (data(0).toBool() || (Bullet::y() < -100)) {
             delete this;
         }
     }
