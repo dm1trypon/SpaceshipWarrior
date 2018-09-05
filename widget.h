@@ -18,6 +18,8 @@ namespace Ui {
 class Widget;
 }
 
+
+
 class Bullet : public QGraphicsLineItem{
 public:
     Bullet(QPointF initPos, QGraphicsItem* parent);
@@ -49,10 +51,10 @@ class Asteroid : public QGraphicsPixmapItem {
 public:
     enum { Type = UserType + 1};
     Asteroid(int xspread);
-
     // QGraphicsItem interface
 public:
     void advance(int phase);
+    //QGraphicsScene* scene;
 private:
     int yspeed = 2;
 
@@ -65,7 +67,6 @@ public:
     int type() const;
 };
 
-
 class Widget : public QWidget
 {
     Q_OBJECT
@@ -73,6 +74,8 @@ class Widget : public QWidget
 public:
     explicit Widget(QWidget *parent = nullptr);
     ~Widget();
+    static QGraphicsTextItem* text;
+
 private slots:
     void onGenerate();
 private:
@@ -81,5 +84,7 @@ private:
     QTimer* animationTimer;
     QTimer* generatorTimer;
 };
+
+
 
 #endif // WIDGET_H
