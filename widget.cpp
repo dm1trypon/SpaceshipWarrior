@@ -8,8 +8,6 @@
 #define BULLET_LENGHT 10
 #define BULLET_SPEED 4
 
-int score = 0;
-
 QGraphicsTextItem* Widget::text;
 
 Widget::Widget(QWidget *parent) :
@@ -35,14 +33,11 @@ Widget::Widget(QWidget *parent) :
     connect(generatorTimer, SIGNAL(timeout()),
             this, SLOT(onGenerate()));
     generatorTimer->start(1000);
-    //score = new QGraphicsTextItem(0, 0);
-    //score->setPos(67, 90);
-    //scene->addItem(score);
     QFont f;
     f.setPointSize(30);
     f.setFamily("Unispace");
     text = new QGraphicsTextItem;
-    text = scene->addText(QString::number(score));
+    text = scene->addText(QString::number(0));
     text->setPos(0, -5);
     text->setDefaultTextColor(Qt::red);
     Widget::text->setFont(f);
@@ -53,10 +48,33 @@ Widget::~Widget()
     delete ui;
 }
 
+void Widget::endGameMessage()
+{
+    QFont font_lose;
+    font_lose.setPointSize(80);
+    font_lose.setFamily("Unispace");
+    QGraphicsTextItem *lose = new QGraphicsTextItem;
+    lose = scene->addText("YOU LOSE!");
+    lose->setPos(110, 210);
+    lose->setFont(font_lose);
+    lose->setDefaultTextColor(Qt::red);
+}
+
 void Widget::onGenerate()
 {
-    scene->addItem(new Asteroid(scene->sceneRect().width()));
+    Asteroid* _asteroid = new Asteroid(scene->sceneRect().width());
+    scene->addItem(_asteroid);
+    connect(&_asteroid->getController(), SIGNAL(signalDestroy()), this, SLOT(sumScore()));
+    connect(&_asteroid->getEndGameMessage(), SIGNAL(signalEndGameMessage()), this, SLOT(endGameMessage()));
 }
+
+void Widget::sumScore()
+{
+    _score++;
+    Widget::text->setPlainText(QString::number(_score));
+    qDebug() << "score" << _score;
+}
+
 
 Asteroid::Asteroid(int xspread) : QGraphicsPixmapItem (0)
 {
@@ -70,28 +88,40 @@ void Asteroid::advance(int phase)
         moveBy(0, yspeed);
 
         if ((data(0).toBool()) || (Asteroid::y() > 800)) {
-            //Asteroid::score = Asteroid::score + 1;
-            if (Asteroid::y() < 800) {
-                score = score + 1;
-                Widget::text->setPlainText(QString::number(score));
+             if (Asteroid::y() < 800) {
+                destroyAsteroidBullet();
             }
             else{
-                QFont font_lose;
-                font_lose.setPointSize(80);
-                font_lose.setFamily("Unispace");
-                QGraphicsTextItem *lose = new QGraphicsTextItem;
-                lose = scene()->addText("YOU LOSE!");
-                lose->setPos(110, 210);
-                lose->setFont(font_lose);
-                lose->setDefaultTextColor(Qt::red);
+                if (!endGame) {
+                    endGameMessageAsteroid();
+                    qDebug() << endGame;
+                    sumTest();
+                    endGame = true;
+                }
+                destroyAsteroidRange();
             }
 
-            delete this;
         }
     }
 }
 
-void Asteroid::mousePressEvent(QGraphicsSceneMouseEvent *event)
+ex &Asteroid::getController()
+{
+    return this->Controller;
+}
+
+ex &Asteroid::getEndGameMessage()
+{
+    return this->ControllerEndGame;
+}
+
+void Asteroid::destroyAsteroidBullet()
+{
+    Controller.destroy();
+    delete this;
+}
+
+void Asteroid::destroyAsteroidRange()
 {
     delete this;
 }
@@ -99,6 +129,21 @@ void Asteroid::mousePressEvent(QGraphicsSceneMouseEvent *event)
 int Asteroid::type() const
 {
     return Type;
+}
+
+void Asteroid::sumTest()
+{
+    qDebug() << "Test message:" << test++;
+}
+
+void Asteroid::endGameMessageAsteroid()
+{
+    ControllerEndGame.endGame();
+}
+
+void Spaceship::endGameMessageSpaceship()
+{
+    ControllerEndGame.endGame();
 }
 
 Spaceship::Spaceship::Spaceship(int sceneHeight) : QGraphicsPixmapItem(0)
@@ -133,16 +178,9 @@ void Spaceship::advance(int phase)
             }
         }
         if (data(0).toBool()) {
-            QFont font_lose;
-            font_lose.setPointSize(80);
-            font_lose.setFamily("Unispace");
-            QGraphicsTextItem *lose = new QGraphicsTextItem;
-            lose = scene()->addText("YOU LOSE!");
-            lose->setPos(110, 210);
-            lose->setFont(font_lose);
-            lose->setDefaultTextColor(Qt::red);
+            endGameMessageSpaceship();
+            qDebug() << "die!";
             delete this;
-
         }
     }
 }
@@ -202,4 +240,15 @@ void Bullet::advance(int phase)
             delete this;
         }
     }
+}
+
+
+void ex::destroy()
+{
+    emit signalDestroy();
+}
+
+void ex::endGame()
+{
+    emit signalEndGameMessage();
 }

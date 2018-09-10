@@ -3,7 +3,6 @@
         <file>images/asteroid.png</file>
         <file>images/spaceship.png</file>
         <file>images/spaceship-big.png</file>
-        <file>images/asteroid.bmp</file>
         <file>images/space.jpg</file>
         <file>images/space-bg.gif</file>
     </qresource>
