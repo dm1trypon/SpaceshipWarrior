@@ -24,10 +24,18 @@ CONFIG += c++11
 
 SOURCES += \
         main.cpp \
-        widget.cpp
+        widget.cpp \
+    asteroid.cpp \
+    spaceship.cpp \
+    bullet.cpp \
+    linksignal.cpp
 
 HEADERS += \
-        widget.h
+        widget.h \
+    asteroid.h \
+    spaceship.h \
+    bullet.h \
+    linksignal.h
 
 FORMS += \
         widget.ui
