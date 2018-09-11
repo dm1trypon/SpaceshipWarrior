@@ -5,16 +5,11 @@
 #include "asteroid.h"
 #include "enemyspaceship.h"
 
-#define CIRCLE_SIZE 50
-#define SPACESHIP_SPEED 6
-#define BULLET_LENGHT 10
-#define BULLET_SPEED 4
-
 Bullet::Bullet(QPointF initPos, QGraphicsItem *parent) : QGraphicsLineItem (parent)
 {
-    yspeed = BULLET_SPEED;
+    //yspeed = BULLET_SPEED;
     setPen(QPen(QBrush(Qt::red), 3));
-    setLine(0, 0, 0, -BULLET_LENGHT);
+    setLine(0, 0, 0, -bulletLenght);
     setPos(initPos);
 }
 

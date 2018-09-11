@@ -16,7 +16,8 @@ public:
     Bullet(QPointF initPos, QGraphicsItem* parent);
     void advance(int phase);
 private:
-    int yspeed;
+    int yspeed = 4;
+    int bulletLenght = 10;
 };
 
 #endif // BULLET_H

@@ -15,6 +15,7 @@
 class Spaceship : public QGraphicsPixmapItem {
 private:
     int xspeed = 0;
+    int spaceshipSpeed = 6;
     LinkSignal Controller;
     void endGameMessageSpaceship(int var);
 public:

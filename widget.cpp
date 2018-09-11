@@ -8,12 +8,6 @@
 #include <QKeyEvent>
 #include <QDebug>
 
-
-#define CIRCLE_SIZE 50
-#define SPACESHIP_SPEED 6
-#define BULLET_LENGHT 10
-#define BULLET_SPEED 4
-
 QGraphicsTextItem* Widget::text;
 
 Widget::Widget(QWidget *parent) :

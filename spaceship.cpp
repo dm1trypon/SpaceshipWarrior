@@ -64,10 +64,10 @@ void Spaceship::keyPressEvent(QKeyEvent *event)
 {
     switch (event->key()) {
     case Qt::Key_Left:
-        xspeed = - SPACESHIP_SPEED;
+        xspeed = - spaceshipSpeed;
         break;
     case Qt::Key_Right:
-        xspeed = SPACESHIP_SPEED;
+        xspeed = spaceshipSpeed;
         break;
     case Qt::Key_Space:
         scene()->addItem(new Bullet(mapToScene(QPointF(pixmap().width()/2, 0)), nullptr));
