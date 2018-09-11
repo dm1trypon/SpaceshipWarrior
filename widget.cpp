@@ -21,12 +21,15 @@ Widget::Widget(QWidget *parent) :
     ui->setupUi(this);
     scene = new QGraphicsScene(0, 0, 800, 600, this);
     scene->setStickyFocus(true);
-    //scene->setBackgroundBrush(QBrush(Qt::black));
     QPixmap pim(":/images/space.jpg");
     scene->setBackgroundBrush(pim.scaled(800,600,Qt::IgnoreAspectRatio,Qt::SmoothTransformation));
     ui->graphicsView->setScene(scene);
     scene->addRect(scene->sceneRect());
+
+    Spaceship* _spaceship = new Spaceship(scene->height());
     scene->addItem(new Spaceship(scene->height()));
+    connect(&_spaceship->getController(), SIGNAL(signalEndGameMessage()), this, SLOT(endGameMessage()));
+
 
     animationTimer = new QTimer(this);
     connect(animationTimer, SIGNAL(timeout()),
@@ -67,6 +70,7 @@ void Widget::endGameMessage()
         endGame = false;
         blockSignals(true);
     }
+    qDebug() << "die!";
 }
 
 void Widget::onGenerate()
@@ -74,8 +78,6 @@ void Widget::onGenerate()
     Asteroid* _asteroid = new Asteroid(scene->sceneRect().width());
     scene->addItem(_asteroid);
     connect(&_asteroid->getController(), SIGNAL(signalDestroy()), this, SLOT(sumScore()));
-    connect(&_asteroid->getController(), SIGNAL(signalEndGameMessage()), this, SLOT(endGameMessage()));
-    //disconnect(&_asteroid->getController(), SIGNAL(signalEndGameMessage()), this, SLOT(endGameMessage()));
 }
 
 void Widget::sumScore()

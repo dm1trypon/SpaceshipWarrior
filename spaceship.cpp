@@ -53,7 +53,6 @@ void Spaceship::advance(int phase)
         }
         if (data(0).toBool()) {
             endGameMessageSpaceship(2);
-            qDebug() << "die!";
             delete this;
         }
     }
