@@ -3,7 +3,6 @@
 #include "bullet.h"
 #include "linksignal.h"
 #include "asteroid.h"
-#include "enemyspaceship.h"
 
 #include <QWidget>
 #include <QGraphicsView>
@@ -15,47 +14,49 @@
 #include <QGraphicsPixmapItem>
 #include <QTimer>
 
-Asteroid::Asteroid(qreal xspread) : QGraphicsPixmapItem (nullptr)
+#include "enemyspaceship.h"
+
+EnemySpaceship::EnemySpaceship(qreal xspread) : QGraphicsPixmapItem (nullptr)
 {
-    setPixmap(QPixmap(":/images/asteroid.png"));
+    setPixmap(QPixmap(":/images/spaceship-big.png"));
     qreal post = rand() % static_cast<int>(xspread - pixmap().width());
     setPos(post, -100);
 }
 
-void Asteroid::advance(int phase)
+void EnemySpaceship::advance(int phase)
 {
     if (phase) {
         moveBy(0, yspeed);
 
-        if ((data(0).toBool()) || (Asteroid::y() > 800)) {
-             if (Asteroid::y() < 800) {
-                destroyAsteroidBullet(1);
+        if ((data(0).toBool()) || (EnemySpaceship::y() > 800)) {
+             if (EnemySpaceship::y() < 800) {
+                destroyEnemySpaceshipBullet(1);
             }
             else{
-                endGameMessageAsteroid(2);
-                destroyAsteroidRange();
+                endGameMessageEnemySpaceship(2);
+                destroyEnemySpaceshipRange();
             }
         }
     }
 }
 
-void Asteroid::destroyAsteroidBullet(int var)
+void EnemySpaceship::destroyEnemySpaceshipBullet(int var)
 {
     Controller.destroy(var);
     delete this;
 }
 
-void Asteroid::destroyAsteroidRange()
+void EnemySpaceship::destroyEnemySpaceshipRange()
 {
     delete this;
 }
 
-int Asteroid::type() const
+int EnemySpaceship::type() const
 {
     return Type;
 }
 
-void Asteroid::endGameMessageAsteroid(int var)
+void EnemySpaceship::endGameMessageEnemySpaceship(int var)
 {
     Controller.destroy(var);
 }

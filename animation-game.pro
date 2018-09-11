@@ -28,14 +28,16 @@ SOURCES += \
     asteroid.cpp \
     spaceship.cpp \
     bullet.cpp \
-    linksignal.cpp
+    linksignal.cpp \
+    enemyspaceship.cpp
 
 HEADERS += \
         widget.h \
     asteroid.h \
     spaceship.h \
     bullet.h \
-    linksignal.h
+    linksignal.h \
+    enemyspaceship.h
 
 FORMS += \
         widget.ui

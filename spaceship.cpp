@@ -14,6 +14,7 @@
 #include <QGraphicsPixmapItem>
 #include <QTimer>
 #include <widget.cpp>
+#include "enemyspaceship.h"
 
 void Spaceship::endGameMessageSpaceship(int var)
 {
@@ -33,7 +34,8 @@ void Spaceship::advance(int phase)
     if (!phase) {
         foreach(QGraphicsItem* item, collidingItems()) {
             Asteroid* obj = qgraphicsitem_cast<Asteroid*>(item);
-            if (obj) {
+            EnemySpaceship* objEnemySpaceship = qgraphicsitem_cast<EnemySpaceship*>(item);
+            if ((obj) || (objEnemySpaceship)) {
                 item->setData(0, true);
                 setData(0, true);
             }

@@ -23,7 +23,8 @@ public:
     ~Widget();
     static QGraphicsTextItem* text;
 private slots:
-    void onGenerate();
+    void onGenerateAsteroid();
+    void onGenerateEnemySpaceship();
     void sumScore();
     void endGameMessage();
 private:
@@ -31,7 +32,8 @@ private:
     Ui::Widget *ui;
     QGraphicsScene* scene;
     QTimer* animationTimer;
-    QTimer* generatorTimer;
+    QTimer* generatorTimerAsteroid;
+    QTimer* generatorTimerEnemySpaceship;
     int _score = 0;
 };
 

@@ -4,6 +4,12 @@
 #include "linksignal.h"
 #include "asteroid.h"
 #include <QDebug>
+#include "enemyspaceship.h"
+
+LinkSignal &EnemySpaceship::getController()
+{
+    return this->Controller;
+}
 
 LinkSignal &Asteroid::getController()
 {

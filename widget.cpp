@@ -4,8 +4,10 @@
 #include "asteroid.h"
 #include "widget.h"
 #include "ui_widget.h"
+#include "enemyspaceship.h"
 #include <QKeyEvent>
 #include <QDebug>
+
 
 #define CIRCLE_SIZE 50
 #define SPACESHIP_SPEED 6
@@ -36,18 +38,26 @@ Widget::Widget(QWidget *parent) :
             scene, SLOT(advance()));
     animationTimer->start(1000/60);
 
-    generatorTimer = new QTimer(this);
-    connect(generatorTimer, SIGNAL(timeout()),
-            this, SLOT(onGenerate()));
-    generatorTimer->start(1000);
-    QFont f;
-    f.setPointSize(30);
-    f.setFamily("Unispace");
+    generatorTimerAsteroid = new QTimer(this);
+    connect(generatorTimerAsteroid, SIGNAL(timeout()),
+            this, SLOT(onGenerateAsteroid()));
+
+    generatorTimerEnemySpaceship = new QTimer(this);
+    connect(generatorTimerEnemySpaceship, SIGNAL(timeout()),
+            this, SLOT(onGenerateEnemySpaceship()));
+
+    generatorTimerAsteroid->start(1000);
+
+    generatorTimerEnemySpaceship->start(4500);
+
+    QFont font;
+    font.setPointSize(30);
+    font.setFamily("Unispace");
     text = new QGraphicsTextItem;
     text = scene->addText(QString::number(0));
     text->setPos(0, -5);
     text->setDefaultTextColor(Qt::red);
-    Widget::text->setFont(f);
+    Widget::text->setFont(font);
 }
 
 Widget::~Widget()
@@ -68,16 +78,24 @@ void Widget::endGameMessage()
         lose->setDefaultTextColor(Qt::red);
         qDebug() << "End!";
         endGame = false;
+        ui->graphicsView->hide();
         blockSignals(true);
     }
     qDebug() << "die!";
 }
 
-void Widget::onGenerate()
+void Widget::onGenerateAsteroid()
 {
     Asteroid* _asteroid = new Asteroid(scene->sceneRect().width());
     scene->addItem(_asteroid);
     connect(&_asteroid->getController(), SIGNAL(signalDestroy()), this, SLOT(sumScore()));
+}
+
+void Widget::onGenerateEnemySpaceship()
+{
+    EnemySpaceship* _enemySpaceship = new EnemySpaceship(scene->sceneRect().width());
+    scene->addItem(_enemySpaceship);
+    connect(&_enemySpaceship->getController(), SIGNAL(signalDestroy()), this, SLOT(sumScore()));
 }
 
 void Widget::sumScore()

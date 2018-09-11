@@ -3,6 +3,7 @@
 #include "bullet.h"
 #include "linksignal.h"
 #include "asteroid.h"
+#include "enemyspaceship.h"
 
 #define CIRCLE_SIZE 50
 #define SPACESHIP_SPEED 6
@@ -22,7 +23,8 @@ void Bullet::advance(int phase)
     if (!phase) {
         foreach(QGraphicsItem* item, collidingItems()) {
             Asteroid* obj = qgraphicsitem_cast<Asteroid*>(item);
-            if (obj) {
+            EnemySpaceship* objEnemySpaceship = qgraphicsitem_cast<EnemySpaceship*>(item);
+            if ((obj) || (objEnemySpaceship)) {
                 item->setData(0, true);
                 setData(0, true);
             }

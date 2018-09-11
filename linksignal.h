@@ -16,6 +16,7 @@ class LinkSignal : public QObject {
 public:
     LinkSignal(){}
     void destroy(int var);
+    static LinkSignal* Instance();
 signals:
     void signalDestroy();
     void signalEndGameMessage();
