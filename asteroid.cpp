@@ -4,8 +4,6 @@
 #include "linksignal.h"
 #include "asteroid.h"
 
-#include "stdlib.h"
-
 #include <QWidget>
 #include <QGraphicsView>
 #include <QGraphicsScene>
