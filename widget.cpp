@@ -37,6 +37,7 @@ Widget::Widget(QWidget *parent) :
 
     generatorTimerEnemySpaceship = new QTimer(this);
     connect(generatorTimerEnemySpaceship, SIGNAL(timeout()), this, SLOT(onGenerateEnemySpaceship()));
+    connect(&LinkSignal::Instance(), SIGNAL(signalDestroy()), this, SLOT(sumScore()));
 
     generatorTimerAsteroid->start(1000);
     generatorTimerEnemySpaceship->start(4500);
@@ -79,14 +80,12 @@ void Widget::onGenerateAsteroid()
 {
     Asteroid* _asteroid = new Asteroid(scene->sceneRect().width());
     scene->addItem(_asteroid);
-    connect(&LinkSignal::Instance(), SIGNAL(signalDestroy()), this, SLOT(sumScore()));
 }
 
 void Widget::onGenerateEnemySpaceship()
 {
     EnemySpaceship* _enemySpaceship = new EnemySpaceship(scene->sceneRect().width());
     scene->addItem(_enemySpaceship);
-    connect(&LinkSignal::Instance(), SIGNAL(signalDestroy()), this, SLOT(sumScore()));
 }
 
 void Widget::sumScore()
