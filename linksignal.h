@@ -13,10 +13,16 @@
 
 class LinkSignal : public QObject {
     Q_OBJECT
-public:
+
+private:
     LinkSignal(){}
+    LinkSignal(const LinkSignal& root) = delete;
+    LinkSignal& operator=(const LinkSignal&) = delete;
+
+public:
+
     void destroy(int var);
-    static LinkSignal* Instance();
+    static LinkSignal& Instance();
 signals:
     void signalDestroy();
     void signalEndGameMessage();

@@ -7,7 +7,6 @@
 
 Bullet::Bullet(QPointF initPos, QGraphicsItem *parent) : QGraphicsLineItem (parent)
 {
-    //yspeed = BULLET_SPEED;
     setPen(QPen(QBrush(Qt::red), 3));
     setLine(0, 0, 0, -bulletLenght);
     setPos(initPos);

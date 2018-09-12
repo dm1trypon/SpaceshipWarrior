@@ -11,6 +11,9 @@
 #include <QGraphicsPixmapItem>
 #include <QTimer>
 
+#define DESTROY 1
+#define ENDGAME 2
+
 namespace Ui {
 class Widget;
 }

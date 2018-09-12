@@ -17,11 +17,14 @@ public:
     enum { Type = UserType + 1};
     EnemySpaceship(qreal xspread);
     void advance(int phase);
-    LinkSignal &getController();
+    //LinkSignal &getController();
     int type() const;
 private:
+    const uint SCREEN_HEIGHT = 800;
     int yspeed = 3;
-    LinkSignal Controller;
+    bool onScreen();
+    bool collision();
+    void endGame();
     void endGameMessageEnemySpaceship(int var);
     void destroyEnemySpaceshipBullet(int var);
     void destroyEnemySpaceshipRange();

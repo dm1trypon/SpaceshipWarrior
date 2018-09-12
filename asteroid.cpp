@@ -14,6 +14,7 @@
 #include <QGraphicsLineItem>
 #include <QGraphicsPixmapItem>
 #include <QTimer>
+#include <QDebug>
 
 Asteroid::Asteroid(qreal xspread) : QGraphicsPixmapItem (nullptr)
 {
@@ -24,29 +25,41 @@ Asteroid::Asteroid(qreal xspread) : QGraphicsPixmapItem (nullptr)
 
 void Asteroid::advance(int phase)
 {
-    if (phase) {
-        moveBy(0, yspeed);
-
-        if ((data(0).toBool()) || (Asteroid::y() > 800)) {
-             if (Asteroid::y() < 800) {
-                destroyAsteroidBullet(1);
-            }
-            else{
-                endGameMessageAsteroid(2);
-                destroyAsteroidRange();
-            }
-        }
+    if (phase <= 0) {
+        return;
     }
+
+    moveBy(0, yspeed);
+
+    if (!onScreen()) {
+        endGame();
+    }
+
+    if (collision()) {
+        destroyAsteroidBullet(DESTROY);
+    }
+}
+
+bool Asteroid::collision()
+{
+    return data(0).toBool();
+}
+
+bool Asteroid::onScreen()
+{
+    return Asteroid::y() < SCREEN_HEIGHT ? true : false;
+}
+
+void Asteroid::endGame()
+{
+    endGameMessageAsteroid(ENDGAME);
+    qDebug() << ENDGAME;
+    delete this;
 }
 
 void Asteroid::destroyAsteroidBullet(int var)
 {
-    Controller.destroy(var);
-    delete this;
-}
-
-void Asteroid::destroyAsteroidRange()
-{
+    LinkSignal::Instance().destroy(var);
     delete this;
 }
 
@@ -57,5 +70,5 @@ int Asteroid::type() const
 
 void Asteroid::endGameMessageAsteroid(int var)
 {
-    Controller.destroy(var);
+    LinkSignal::Instance().destroy(var);
 }

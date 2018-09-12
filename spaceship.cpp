@@ -3,7 +3,7 @@
 #include "bullet.h"
 #include "linksignal.h"
 #include "asteroid.h"
-
+#include "enemyspaceship.h"
 #include <QWidget>
 #include <QGraphicsView>
 #include <QGraphicsScene>
@@ -14,11 +14,10 @@
 #include <QGraphicsPixmapItem>
 #include <QTimer>
 #include <widget.cpp>
-#include "enemyspaceship.h"
 
 void Spaceship::endGameMessageSpaceship(int var)
 {
-    Controller.destroy(var);
+    LinkSignal::Instance().destroy(var);
 }
 
 Spaceship::Spaceship::Spaceship(qreal sceneHeight) : QGraphicsPixmapItem(nullptr)
@@ -31,33 +30,72 @@ Spaceship::Spaceship::Spaceship(qreal sceneHeight) : QGraphicsPixmapItem(nullptr
 
 void Spaceship::advance(int phase)
 {
-    if (!phase) {
-        foreach(QGraphicsItem* item, collidingItems()) {
-            Asteroid* obj = qgraphicsitem_cast<Asteroid*>(item);
-            EnemySpaceship* objEnemySpaceship = qgraphicsitem_cast<EnemySpaceship*>(item);
-            if ((obj) || (objEnemySpaceship)) {
-                item->setData(0, true);
-                setData(0, true);
-            }
+    if (phase <= 0) {
+        collisionObjects();
+    }
+    if (phase >= 1) {
+        moveSpaceship();
+    }
+    if (collision()) {
+        endGameMessageSpaceship(ENDGAME);
+        delete this;
+    }
+}
+
+void Spaceship::moveSpaceship()
+{
+    if (onWidthScreen(SEGMENT)) {
+        moveBy(xspeed, 0);
+    }
+    if (!onWidthScreen(SEGMENT)) {
+        stabilizeMoveSpaceship();
+    }
+}
+
+void Spaceship::stabilizeMoveSpaceship()
+{
+    if (onWidthScreen(RIGHT)) {
+        Spaceship::setPos(SCREEN_WIDTH_END - 1, SCREEN_HEIGHT - pixmap().height());
+    }
+    if (onWidthScreen(LEFT)) {
+        Spaceship::setPos(SCREEN_WIDTH_BEGIN + 1, SCREEN_HEIGHT - pixmap().height());
+    }
+}
+
+void Spaceship::collisionObjects()
+{
+    foreach(QGraphicsItem* item, collidingItems()) {
+        Asteroid* objAsteroid = qgraphicsitem_cast<Asteroid*>(item);
+        EnemySpaceship* objEnemySpaceship = qgraphicsitem_cast<EnemySpaceship*>(item);
+        if (objectDefinition(objAsteroid, objEnemySpaceship)) {
+            item->setData(0, true);
+            setData(0, true);
         }
     }
-    else {
-        if ((Spaceship::x() <= 700) && (Spaceship::x() >= -20)) {
-            moveBy(xspeed, 0);
-        }
-        else {
-            if ((Spaceship::x() >= 700)) {
-                Spaceship::setPos(699, 600 - pixmap().height());
-            }
-            if ((Spaceship::x() <= -20)) {
-                Spaceship::setPos(-19, 600 - pixmap().height());
-            }
-        }
-        if (data(0).toBool()) {
-            endGameMessageSpaceship(2);
-            delete this;
-        }
+}
+
+bool Spaceship::objectDefinition(Asteroid* objAsteroid, EnemySpaceship* objEnemySpaceship)
+{
+    return (objAsteroid) || (objEnemySpaceship) ? true : false;
+}
+
+bool Spaceship::onWidthScreen(int var)
+{
+    switch (var) {
+    case 0:
+        return this->x() >= SCREEN_WIDTH_END ? true : false;
+    case 1:
+        return this->x() <= SCREEN_WIDTH_BEGIN ? true : false;
+    case 2:
+        return this->x() >= SCREEN_WIDTH_BEGIN && this->x() <= SCREEN_WIDTH_END ? true : false;
+    default:
+        return false;
     }
+}
+
+bool Spaceship::collision()
+{
+    return data(0).toBool();
 }
 
 void Spaceship::keyPressEvent(QKeyEvent *event)

@@ -15,16 +15,19 @@
 
 class Asteroid : public QGraphicsPixmapItem {
 public:
+    const uint SCREEN_HEIGHT = 800;
     enum { Type = UserType + 1};
     Asteroid(qreal xspread);
     void advance(int phase);
-    LinkSignal &getController();
+    //LinkSignal &getController();
     int type() const;
 private:
     int yspeed = 2;
-    LinkSignal Controller;
+    bool collision();
+    bool onScreen();
+    void endGame();
     void endGameMessageAsteroid(int var);
     void destroyAsteroidBullet(int var);
-    void destroyAsteroidRange();
+    //void destroyAsteroidRange();
 };
 #endif // ASTEROID_H

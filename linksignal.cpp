@@ -3,31 +3,40 @@
 #include "bullet.h"
 #include "linksignal.h"
 #include "asteroid.h"
-#include <QDebug>
 #include "enemyspaceship.h"
+#include <QDebug>
 
-LinkSignal &EnemySpaceship::getController()
-{
-    return this->Controller;
-}
+//LinkSignal &EnemySpaceship::getController()
+//{
+//    return LinkSignal::Instance();
+//}
 
-LinkSignal &Asteroid::getController()
-{
-    return this->Controller;
-}
+//LinkSignal &Asteroid::getController()
+//{
+//    return LinkSignal::Instance();
+//}
 
-LinkSignal &Spaceship::getController()
-{
-    return this->Controller;
-}
+//LinkSignal &Spaceship::getController()
+//{
+//    return LinkSignal::Instance();
+//}
 
 void LinkSignal::destroy(int var)
 {
-    if (var == 1) {
+    switch (var) {
+    case DESTROY:
         emit signalDestroy();
-    }
-    if (var == 2){
-        qDebug() << "INT VAR:" << var;
+        break;
+    case ENDGAME:
         emit signalEndGameMessage();
+        break;
+    default:
+        break;
     }
+}
+
+LinkSignal &LinkSignal::Instance()
+{
+    static LinkSignal theSingleInstance;
+    return theSingleInstance;
 }

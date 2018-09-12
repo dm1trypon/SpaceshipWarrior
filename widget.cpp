@@ -5,6 +5,7 @@
 #include "widget.h"
 #include "ui_widget.h"
 #include "enemyspaceship.h"
+
 #include <QKeyEvent>
 #include <QDebug>
 
@@ -23,25 +24,21 @@ Widget::Widget(QWidget *parent) :
     scene->addRect(scene->sceneRect());
 
     Spaceship* _spaceship = new Spaceship(scene->height());
-    scene->addItem(new Spaceship(scene->height()));
-    connect(&_spaceship->getController(), SIGNAL(signalEndGameMessage()), this, SLOT(endGameMessage()));
+    scene->addItem(_spaceship);
+    connect(&LinkSignal::Instance(), SIGNAL(signalEndGameMessage()), this, SLOT(endGameMessage()));
 
 
     animationTimer = new QTimer(this);
-    connect(animationTimer, SIGNAL(timeout()),
-            scene, SLOT(advance()));
+    connect(animationTimer, SIGNAL(timeout()), scene, SLOT(advance()));
     animationTimer->start(1000/60);
 
     generatorTimerAsteroid = new QTimer(this);
-    connect(generatorTimerAsteroid, SIGNAL(timeout()),
-            this, SLOT(onGenerateAsteroid()));
+    connect(generatorTimerAsteroid, SIGNAL(timeout()), this, SLOT(onGenerateAsteroid()));
 
     generatorTimerEnemySpaceship = new QTimer(this);
-    connect(generatorTimerEnemySpaceship, SIGNAL(timeout()),
-            this, SLOT(onGenerateEnemySpaceship()));
+    connect(generatorTimerEnemySpaceship, SIGNAL(timeout()), this, SLOT(onGenerateEnemySpaceship()));
 
     generatorTimerAsteroid->start(1000);
-
     generatorTimerEnemySpaceship->start(4500);
 
     QFont font;
@@ -72,7 +69,7 @@ void Widget::endGameMessage()
         lose->setDefaultTextColor(Qt::red);
         qDebug() << "End!";
         endGame = false;
-        ui->graphicsView->hide();
+        //ui->graphicsView->hide();
         blockSignals(true);
     }
     qDebug() << "die!";
@@ -82,14 +79,14 @@ void Widget::onGenerateAsteroid()
 {
     Asteroid* _asteroid = new Asteroid(scene->sceneRect().width());
     scene->addItem(_asteroid);
-    connect(&_asteroid->getController(), SIGNAL(signalDestroy()), this, SLOT(sumScore()));
+    connect(&LinkSignal::Instance(), SIGNAL(signalDestroy()), this, SLOT(sumScore()));
 }
 
 void Widget::onGenerateEnemySpaceship()
 {
     EnemySpaceship* _enemySpaceship = new EnemySpaceship(scene->sceneRect().width());
     scene->addItem(_enemySpaceship);
-    connect(&_enemySpaceship->getController(), SIGNAL(signalDestroy()), this, SLOT(sumScore()));
+    connect(&LinkSignal::Instance(), SIGNAL(signalDestroy()), this, SLOT(sumScore()));
 }
 
 void Widget::sumScore()

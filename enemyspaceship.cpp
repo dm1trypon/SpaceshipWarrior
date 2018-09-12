@@ -3,6 +3,7 @@
 #include "bullet.h"
 #include "linksignal.h"
 #include "asteroid.h"
+#include "enemyspaceship.h"
 
 #include <QWidget>
 #include <QGraphicsView>
@@ -13,8 +14,7 @@
 #include <QGraphicsLineItem>
 #include <QGraphicsPixmapItem>
 #include <QTimer>
-
-#include "enemyspaceship.h"
+#include <QDebug>
 
 EnemySpaceship::EnemySpaceship(qreal xspread) : QGraphicsPixmapItem (nullptr)
 {
@@ -25,24 +25,41 @@ EnemySpaceship::EnemySpaceship(qreal xspread) : QGraphicsPixmapItem (nullptr)
 
 void EnemySpaceship::advance(int phase)
 {
-    if (phase) {
-        moveBy(0, yspeed);
-
-        if ((data(0).toBool()) || (EnemySpaceship::y() > 800)) {
-             if (EnemySpaceship::y() < 800) {
-                destroyEnemySpaceshipBullet(1);
-            }
-            else{
-                endGameMessageEnemySpaceship(2);
-                destroyEnemySpaceshipRange();
-            }
-        }
+    if (phase <= 0) {
+        return;
     }
+
+    moveBy(0, yspeed);
+
+    if (!onScreen()) {
+        endGame();
+    }
+
+    if (collision()) {
+        destroyEnemySpaceshipBullet(DESTROY);
+    }
+}
+
+bool EnemySpaceship::collision()
+{
+    return data(0).toBool();
+}
+
+bool EnemySpaceship::onScreen()
+{
+    return EnemySpaceship::y() < SCREEN_HEIGHT ? true : false;
+}
+
+void EnemySpaceship::endGame()
+{
+    endGameMessageEnemySpaceship(ENDGAME);
+    qDebug() << ENDGAME;
+    delete this;
 }
 
 void EnemySpaceship::destroyEnemySpaceshipBullet(int var)
 {
-    Controller.destroy(var);
+    LinkSignal::Instance().destroy(var);
     delete this;
 }
 
@@ -58,5 +75,5 @@ int EnemySpaceship::type() const
 
 void EnemySpaceship::endGameMessageEnemySpaceship(int var)
 {
-    Controller.destroy(var);
+    LinkSignal::Instance().destroy(var);
 }
