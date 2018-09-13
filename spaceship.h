@@ -14,7 +14,8 @@
 #include "asteroid.h"
 #include "enemyspaceship.h"
 
-class Spaceship : public QGraphicsPixmapItem {
+class Spaceship : public QGraphicsPixmapItem
+{
 private:
     const uint SCREEN_WIDTH_END = 700;
     const int SCREEN_WIDTH_BEGIN = -20;
@@ -31,6 +32,7 @@ private:
     void endGameMessageSpaceship(int var);
     void stabilizeMoveSpaceship();
     void moveSpaceship();
+    void destroyDefinition(QGraphicsItem* item, Asteroid* objAsteroid, EnemySpaceship* objEnemySpaceship);
 public:
     //LinkSignal &getController();
     Spaceship(qreal sceneHeight);

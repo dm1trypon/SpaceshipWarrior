@@ -20,7 +20,7 @@ EnemySpaceship::EnemySpaceship(qreal xspread) : QGraphicsPixmapItem (nullptr)
 {
     setPixmap(QPixmap(":/images/spaceship-big.png"));
     qreal post = rand() % static_cast<int>(xspread - pixmap().width());
-    setPos(post, -100);
+    setPos(post, SCREEN_TOP);
 }
 
 void EnemySpaceship::advance(int phase)
@@ -28,8 +28,7 @@ void EnemySpaceship::advance(int phase)
     if (phase <= 0) {
         return;
     }
-
-    moveBy(0, yspeed);
+    moveBy(xspeed, yspeed);
 
     if (!onScreen()) {
         endGame();
@@ -40,6 +39,15 @@ void EnemySpaceship::advance(int phase)
     }
 }
 
+void EnemySpaceship::lifeChangerEnemySpaceship()
+{
+    life--;
+    if(!life)
+    {
+        delete this;
+    }
+}
+
 bool EnemySpaceship::collision()
 {
     return data(0).toBool();
@@ -47,33 +55,21 @@ bool EnemySpaceship::collision()
 
 bool EnemySpaceship::onScreen()
 {
-    return EnemySpaceship::y() < SCREEN_HEIGHT ? true : false;
+    return this->y() < SCREEN_HEIGHT;
 }
 
 void EnemySpaceship::endGame()
 {
-    endGameMessageEnemySpaceship(ENDGAME);
-    qDebug() << ENDGAME;
+    LinkSignal::Instance().destroy(ENDGAME);
     delete this;
 }
 
 void EnemySpaceship::destroyEnemySpaceshipBullet(int var)
 {
     LinkSignal::Instance().destroy(var);
-    delete this;
-}
-
-void EnemySpaceship::destroyEnemySpaceshipRange()
-{
-    delete this;
 }
 
 int EnemySpaceship::type() const
 {
     return Type;
-}
-
-void EnemySpaceship::endGameMessageEnemySpaceship(int var)
-{
-    LinkSignal::Instance().destroy(var);
 }

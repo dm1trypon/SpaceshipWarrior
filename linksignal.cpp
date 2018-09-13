@@ -4,22 +4,8 @@
 #include "linksignal.h"
 #include "asteroid.h"
 #include "enemyspaceship.h"
+
 #include <QDebug>
-
-//LinkSignal &EnemySpaceship::getController()
-//{
-//    return LinkSignal::Instance();
-//}
-
-//LinkSignal &Asteroid::getController()
-//{
-//    return LinkSignal::Instance();
-//}
-
-//LinkSignal &Spaceship::getController()
-//{
-//    return LinkSignal::Instance();
-//}
 
 void LinkSignal::destroy(int var)
 {

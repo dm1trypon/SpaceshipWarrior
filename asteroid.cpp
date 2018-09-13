@@ -20,7 +20,7 @@ Asteroid::Asteroid(qreal xspread) : QGraphicsPixmapItem (nullptr)
 {
     setPixmap(QPixmap(":/images/asteroid.png"));
     qreal post = rand() % static_cast<int>(xspread - pixmap().width());
-    setPos(post, -100);
+    setPos(post, SCREEN_TOP);
 }
 
 void Asteroid::advance(int phase)
@@ -47,7 +47,7 @@ bool Asteroid::collision()
 
 bool Asteroid::onScreen()
 {
-    return Asteroid::y() < SCREEN_HEIGHT ? true : false;
+    return this->y() < SCREEN_HEIGHT ? true : false;
 }
 
 void Asteroid::endGame()

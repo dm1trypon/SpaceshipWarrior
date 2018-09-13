@@ -13,9 +13,11 @@
 
 #include "linksignal.h"
 
-class Asteroid : public QGraphicsPixmapItem {
+class Asteroid : public QGraphicsPixmapItem
+{
 public:
     const uint SCREEN_HEIGHT = 800;
+    const int SCREEN_TOP = -100;
     enum { Type = UserType + 1};
     Asteroid(qreal xspread);
     void advance(int phase);

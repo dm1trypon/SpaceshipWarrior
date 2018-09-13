@@ -4,6 +4,7 @@
 #include "linksignal.h"
 #include "asteroid.h"
 #include "enemyspaceship.h"
+
 #include <QWidget>
 #include <QGraphicsView>
 #include <QGraphicsScene>
@@ -13,7 +14,7 @@
 #include <QGraphicsLineItem>
 #include <QGraphicsPixmapItem>
 #include <QTimer>
-#include <widget.cpp>
+#include <QKeyEvent>
 
 void Spaceship::endGameMessageSpaceship(int var)
 {
@@ -54,11 +55,11 @@ void Spaceship::moveSpaceship()
 
 void Spaceship::stabilizeMoveSpaceship()
 {
-    if (onWidthScreen(RIGHT)) {
-        Spaceship::setPos(SCREEN_WIDTH_END - 1, SCREEN_HEIGHT - pixmap().height());
-    }
     if (onWidthScreen(LEFT)) {
-        Spaceship::setPos(SCREEN_WIDTH_BEGIN + 1, SCREEN_HEIGHT - pixmap().height());
+        this->setPos(SCREEN_WIDTH_END - 1, SCREEN_HEIGHT - pixmap().height());
+    }
+    if (onWidthScreen(RIGHT)) {
+        this->setPos(SCREEN_WIDTH_BEGIN + 1, SCREEN_HEIGHT - pixmap().height());
     }
 }
 
@@ -67,27 +68,32 @@ void Spaceship::collisionObjects()
     foreach(QGraphicsItem* item, collidingItems()) {
         Asteroid* objAsteroid = qgraphicsitem_cast<Asteroid*>(item);
         EnemySpaceship* objEnemySpaceship = qgraphicsitem_cast<EnemySpaceship*>(item);
-        if (objectDefinition(objAsteroid, objEnemySpaceship)) {
-            item->setData(0, true);
-            setData(0, true);
-        }
+        destroyDefinition(item, objAsteroid, objEnemySpaceship);
+    }
+}
+
+void Spaceship::destroyDefinition(QGraphicsItem* item, Asteroid* objAsteroid, EnemySpaceship* objEnemySpaceship)
+{
+    if (objectDefinition(objAsteroid, objEnemySpaceship)) {
+        item->setData(0, true);
+        setData(0, true);
     }
 }
 
 bool Spaceship::objectDefinition(Asteroid* objAsteroid, EnemySpaceship* objEnemySpaceship)
 {
-    return (objAsteroid) || (objEnemySpaceship) ? true : false;
+    return objAsteroid || objEnemySpaceship;
 }
 
 bool Spaceship::onWidthScreen(int var)
 {
     switch (var) {
     case 0:
-        return this->x() >= SCREEN_WIDTH_END ? true : false;
+        return this->x() >= SCREEN_WIDTH_END;
     case 1:
-        return this->x() <= SCREEN_WIDTH_BEGIN ? true : false;
+        return this->x() <= SCREEN_WIDTH_BEGIN;
     case 2:
-        return this->x() >= SCREEN_WIDTH_BEGIN && this->x() <= SCREEN_WIDTH_END ? true : false;
+        return this->x() >= SCREEN_WIDTH_BEGIN && this->x() <= SCREEN_WIDTH_END;
     default:
         return false;
     }

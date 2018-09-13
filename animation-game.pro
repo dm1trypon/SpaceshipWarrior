@@ -29,7 +29,8 @@ SOURCES += \
     spaceship.cpp \
     bullet.cpp \
     linksignal.cpp \
-    enemyspaceship.cpp
+    enemyspaceship.cpp \
+    menu.cpp
 
 HEADERS += \
         widget.h \
@@ -37,7 +38,8 @@ HEADERS += \
     spaceship.h \
     bullet.h \
     linksignal.h \
-    enemyspaceship.h
+    enemyspaceship.h \
+    menu.h
 
 FORMS += \
         widget.ui
