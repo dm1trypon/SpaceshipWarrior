@@ -19,8 +19,10 @@ private:
     void stabilizeMoveSpaceship();
     void moveSpaceship();
     void destroyDefinition(QGraphicsItem* item, Asteroid* objAsteroid, EnemySpaceship* objEnemySpaceship);
+    qreal SpaceshipPosX();
+    qreal SpaceshipPosY();
 public:
-    Spaceship(qreal sceneHeight);
+    Spaceship();
     void advance(int phase);
 protected:
     void keyPressEvent(QKeyEvent *event);

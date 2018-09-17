@@ -12,7 +12,7 @@ Widget::Widget(QWidget *parent) :
     createMenu();
     scene->addRect(scene->sceneRect());
     connections();
-    descriptionScore(30, "Unispace", QString::number(0), Qt::red, 0, -5);
+    descriptionScore(30, "Unispace", QString::number(0), Qt::darkCyan, 0, -5);
 }
 
 Widget::~Widget()
@@ -35,7 +35,7 @@ void Widget::connections()
 
 void Widget::createSpaceship()
 {
-    this->_spaceship = new Spaceship(scene->height());
+    this->_spaceship = new Spaceship();
     scene->addItem(_spaceship);
 }
 

@@ -5,12 +5,22 @@ void Spaceship::endGameMessageSpaceship(int var)
     LinkSignal::Instance().destroy(var);
 }
 
-Spaceship::Spaceship::Spaceship(qreal sceneHeight) : QGraphicsPixmapItem(nullptr)
+Spaceship::Spaceship::Spaceship() : QGraphicsPixmapItem(nullptr)
 {
     setPixmap(QPixmap(":/images/spaceship.png"));
-    setPos(0, sceneHeight - pixmap().height());
+    setPos(SpaceshipPosX(), SpaceshipPosY());
     setFlag(QGraphicsItem::ItemIsFocusable);
     setFocus();
+}
+
+qreal Spaceship::SpaceshipPosX()
+{
+    return SCREEN_WIDTH / 2 - pixmap().width() / 2;
+}
+
+qreal Spaceship::SpaceshipPosY()
+{
+    return SCREEN_HEIGHT - pixmap().height();
 }
 
 void Spaceship::advance(int phase)

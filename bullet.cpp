@@ -2,7 +2,7 @@
 
 Bullet::Bullet(QPointF initPos, QGraphicsItem *parent) : QGraphicsLineItem (parent)
 {
-    setPen(QPen(QBrush(Qt::red), 3));
+    setPen(QPen(QBrush(Qt::cyan), 3));
     setLine(0, 0, 0, -bulletLenght);
     setPos(initPos);
 }
