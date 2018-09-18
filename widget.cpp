@@ -41,14 +41,12 @@ void Widget::connections()
     connect(&LinkSignal::Instance(), SIGNAL(signalEndGameMessage()), this, SLOT(endGameMessage()));
     connect(&LinkSignal::Instance(), SIGNAL(signalDestroy()), this, SLOT(sumScore()));
     connect(&LinkSignal::Instance(), SIGNAL(signalDestroyEnemySpaceship()), this, SLOT(lifeChangerEnemySpaceship()));
+    connect(&LinkSignal::Instance(), SIGNAL(signalDescriptionEndGame(QString)), this, SLOT(slotDescriptionEndGame(QString)));
     connect(buttonNewGame, SIGNAL(clicked()), this, SLOT(newGame()));
     connect(buttonLeaders, SIGNAL(clicked()), this, SLOT(showLeaders()));
     connect(buttonQuitGame, SIGNAL(clicked()), this, SLOT(close()));
     connect(buttonBack, SIGNAL(clicked()), this, SLOT(showMenu()));
     connect(lineEditName, SIGNAL(returnPressed()), this, SLOT(checkNickName()));
-    connect(m_pTcpSocket, SIGNAL(connected()), SLOT(slotConnected()));
-    connect(m_pTcpSocket, SIGNAL(readyRead()), SLOT(slotReadyRead()));
-    connect(m_pTcpSocket, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(slotError(QAbstractSocket::SocketError)));
 }
 
 void Widget::createSpaceship()
@@ -124,6 +122,7 @@ void Widget::endGameMessage()
     }
     descriptionEndGame(80, "Unispace", "YOU LOSE!", Qt::yellow, 110, 210);
     endGame = false;
+    LinkSignal::Instance().endGameCheck(endGame);
     sceneHideTimer->start(TIME_HIDE_SCENE);
 }
 
@@ -142,6 +141,7 @@ void Widget::onGenerateEnemySpaceship()
 void Widget::sumScore()
 {
     _score++;
+    LinkSignal::Instance().getScore(_score);
     score->setPlainText(QString::number(_score));
 }
 
@@ -151,7 +151,13 @@ void Widget::checkNickName()
     {
         return;
     }
+    LinkSignal::Instance().getLineEditText(lineEditName->text());
     showMenu();
+}
+
+void Widget::slotDescriptionEndGame(QString textLine)
+{
+    descriptionEndGame(25, "Unispace", textLine, Qt::yellow, 280, yLeadersLineStep += 30);
 }
 
 void Widget::createNameLineEdit()
@@ -178,9 +184,10 @@ void Widget::createMenu()
 void Widget::showLeaders()
 {
     endGame = true;
+    LinkSignal::Instance().endGameCheck(endGame);
     hideMenu();
     buttonBack->show();
-    slotSendToServerGet();
+    LinkSignal::Instance().sendToServerGet();
 }
 
 void Widget::showMenu()
@@ -207,7 +214,7 @@ void Widget::hideMenu()
 void Widget::stopGame()
 {
     buttonBack->hide();
-    slotSendToServerSet();
+    LinkSignal::Instance().sendToServerSet();
     timersStop();
     clearScene();
     showMenu();
@@ -217,6 +224,7 @@ void Widget::newGame()
 {
     blockSignals(false);
     endGame = true;
+    LinkSignal::Instance().endGameCheck(endGame);
     _score = 0;
     hideMenu();
     timersStart();
@@ -256,105 +264,4 @@ void Widget::reinicializateEnemySpaceship()
     onGenerateEnemySpaceship();
     this->_enemySpaceship->setPos(x, y);
     life--;
-}
-/////////////////////////////////////////////////////////////////////////////////////////////////////
-QString Widget::addToJson(QString str)
-{
-    QJsonDocument document;
-    QJsonObject root = document.object();
-    root.insert(lineEditName->text(), QJsonValue::fromVariant(str));
-    document.setObject(root);
-    QString strJson(document.toJson(QJsonDocument::Compact));
-    return strJson;
-}
-
-void Widget::slotReadyRead()
-{
-    QDataStream in(m_pTcpSocket);
-    in.setVersion(QDataStream::Qt_5_8);
-    for (;;)
-    {
-        if (!m_nNextBlockSize)
-        {
-            if (static_cast<quint16>(m_pTcpSocket->bytesAvailable()) < sizeof(quint16))
-            {
-                break;
-            }
-            in >> m_nNextBlockSize;
-        }
-        if (m_pTcpSocket->bytesAvailable() < m_nNextBlockSize)
-        {
-            break;
-        }
-        QString str;
-        in >> str;
-        m_nNextBlockSize = 0;
-        if(endGame)
-        {
-            insertDataReadyRead(str);
-        }
-    }
-}
-
-void Widget::insertDataReadyRead(QString str)
-{
-    QJsonDocument jsonDoc = QJsonDocument::fromJson(str.toUtf8());
-    QJsonObject jsObj = jsonDoc.object();
-    QMap<int, QString> map;
-    foreach(const QString& key, jsObj.keys())
-    {
-        QJsonValue value = jsObj.value(key);
-        int valueInt = value.toString().toInt();
-        map.insert(valueInt, key);
-        if (lastMapValue < valueInt)
-        {
-            lastMapValue = valueInt;
-        }
-    }
-    QMap<int, QString>::const_iterator i = map.constEnd();
-    do {
-        --i;
-        descriptionEndGame(25, "Unispace", i.value() + " : " + QString::number(i.key()), Qt::yellow, 280, yLeadersLineStep += 30);
-    } while (i != map.constBegin());
-}
-
-void Widget::slotError(QAbstractSocket::SocketError err)
-{
-    QString strError =
-            "Error: " + (err == QAbstractSocket::HostNotFoundError ?
-                         "The host was not found." :
-                         err == QAbstractSocket::RemoteHostClosedError ?
-                         "The remote host is closed." :
-                         err == QAbstractSocket::ConnectionRefusedError ?
-                         "The connection was refused." :
-                         QString(m_pTcpSocket->errorString())
-                        );
-    QMessageBox::critical(nullptr, "Server Error", "Unable to start the server:" + strError);
-}
-
-void Widget::slotSendToServerGet()
-{
-    QByteArray arrBlock;
-    QDataStream out(&arrBlock, QIODevice::WriteOnly);
-    out.setVersion(QDataStream::Qt_5_8);
-    out << quint16(0) << addToJson("onlyRead");
-    out.device()->seek(0);
-    out << quint16(static_cast<quint16>(arrBlock.size()) - sizeof(quint16));
-    m_pTcpSocket->write(arrBlock);
-}
-
-void Widget::slotSendToServerSet()
-{
-    QByteArray arrBlock;
-    QDataStream out(&arrBlock, QIODevice::WriteOnly);
-    out.setVersion(QDataStream::Qt_5_8);
-    out << quint16(0) << addToJson(QString::number(_score));
-    out.device()->seek(0);
-    out << quint16(static_cast<quint16>(arrBlock.size()) - sizeof(quint16));
-    m_pTcpSocket->write(arrBlock);
-}
-
-void Widget::slotConnected()
-{
-    qDebug() << "CONNECTED!";
 }

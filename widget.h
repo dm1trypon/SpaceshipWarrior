@@ -12,6 +12,7 @@
 
 namespace Ui {
 class Widget;
+//class Client;
 }
 
 class Widget : public QWidget
@@ -29,14 +30,10 @@ private slots:
     void newGame();
     void stopGame();
     void showLeaders();
-    void slotReadyRead();
-    void slotError(QAbstractSocket::SocketError err);
-    void slotSendToServerGet();
-    void slotSendToServerSet();
-    void slotConnected();
     void createMenu();
     void showMenu();
     void checkNickName();
+    void slotDescriptionEndGame(QString textLine);
 private:
     QString addToJson(QString str);
     QTcpSocket* m_pTcpSocket;
