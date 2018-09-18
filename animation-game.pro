@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui widgets
+QT       += core gui widgets network
 
 TARGET = animation-game
 TEMPLATE = app
@@ -30,6 +30,7 @@ SOURCES += \
     bullet.cpp \
     linksignal.cpp \
     enemyspaceship.cpp \
+    client.cpp
 
 HEADERS += \
         widget.h \
@@ -38,7 +39,8 @@ HEADERS += \
     bullet.h \
     linksignal.h \
     enemyspaceship.h \
-    const.h
+    const.h \
+    client.h
 
 FORMS += \
         widget.ui

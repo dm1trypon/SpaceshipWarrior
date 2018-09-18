@@ -13,6 +13,7 @@
 #include <QDebug>
 #include <QKeyEvent>
 #include <QPushButton>
+#include <QTcpSocket>
 
 #include "asteroid.h"
 #include "bullet.h"
@@ -20,6 +21,7 @@
 #include "linksignal.h"
 #include "spaceship.h"
 #include "widget.h"
+#include "client.h"
 
 #define DESTROY 1
 #define ENDGAME 2
