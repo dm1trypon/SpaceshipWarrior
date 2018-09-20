@@ -1,10 +1,23 @@
+#include "asteroid.h"
 #include "const.h"
+#include "linksignal.h"
 
-Asteroid::Asteroid(qreal xspread) : QGraphicsPixmapItem (nullptr)
+Asteroid::Asteroid(qreal xspread) : QObject(), QGraphicsPixmapItem (nullptr)
 {
-    setPixmap(QPixmap(":/images/asteroid.png"));
-    qreal post = rand() % static_cast<int>(xspread - pixmap().width());
-    setPos(post, SCREEN_TOP);
+    this->setPixmap(QPixmap(":/images/asteroid.png"));
+    srand(static_cast<uint>(time(nullptr)));
+    setPos(getRandomWidth(xspread), SCREEN_TOP);
+    connect(&LinkSignal::Instance(), SIGNAL(signalSpeedAsteroidSet(int)), this, SLOT(speedAsteroidSet(int)));
+}
+
+void Asteroid::speedAsteroidSet(int speedAsteroid)
+{
+    yspeed = speedAsteroid;
+}
+
+qreal Asteroid::getRandomWidth(qreal xspread)
+{
+    return rand() % static_cast<int>(xspread - pixmap().width());
 }
 
 void Asteroid::advance(int phase)

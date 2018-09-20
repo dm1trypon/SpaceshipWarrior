@@ -1,8 +1,7 @@
 #ifndef CLIENT_H
 #define CLIENT_H
 
-#include <QTextEdit>
-#include <QLineEdit>
+#include <QWidget>
 #include <QTcpSocket>
 
 class Client : public QWidget
@@ -20,6 +19,7 @@ private:
     int yLeadersLineStep = 30;
     QString _lineEditText;
     void insertDataReadyRead(QString str);
+    void bubbleSortScore(QMultiMap<int, QString> map1, QMultiMap<int, QString> map2, int sumLine);
 private slots:
     void slotGetScore(int score);
     void slotReadyRead();

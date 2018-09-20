@@ -1,25 +1,25 @@
 #ifndef WIDGET_H
 #define WIDGET_H
 
-#include <QWidget>
-#include <QPushButton>
-#include <QTcpSocket>
-#include <QLineEdit>
-
 #include "enemyspaceship.h"
 #include "spaceship.h"
 #include "asteroid.h"
 
+#include <QWidget>
+#include <QPushButton>
+#include <QTcpSocket>
+#include <QLineEdit>
+#include <QLabel>
+
 namespace Ui {
 class Widget;
-//class Client;
 }
 
 class Widget : public QWidget
 {
     Q_OBJECT
 public:
-    explicit Widget(const QString& strHost ,int nPort, QWidget *parent = nullptr);
+    explicit Widget(QWidget *parent = nullptr);
     ~Widget();
 private slots:
     void lifeChangerEnemySpaceship();
@@ -34,6 +34,8 @@ private slots:
     void showMenu();
     void checkNickName();
     void slotDescriptionEndGame(QString textLine);
+    void slotStopAnimationDestroySpaceships();
+    void slotStartAnimationDestroySpaceships(int _enemySpaceShipX, int _enemySpaceShipY, int pixmapWidth, int pixmapHeight);
 private:
     QString addToJson(QString str);
     QTcpSocket* m_pTcpSocket;
@@ -53,12 +55,20 @@ private:
     QTimer* generatorTimerAsteroid;
     QTimer* generatorTimerEnemySpaceship;
     QTimer* sceneHideTimer;
+    QTimer* animationDestroyTimer;
+    QLabel* animationDestroyLabel;
+    QMovie* destroyMovie;
+    QGraphicsProxyWidget* proxy;
     bool endGame = true;
     bool startGame = true;
     int lastMapValue = 0;
     int _score = 0;
     int life = 3;
+    int speedAsteroid= 2;
+    int speedEnemySpaceShip = 1;
     int yLeadersLineStep = 100;
+    int spaceshipsGetX();
+    int spaceshipsGetY();
     void reinicializateEnemySpaceship();
     void connections();
     void hideMenu();

@@ -5,5 +5,7 @@
         <file>images/spaceship-big.png</file>
         <file>images/space.jpg</file>
         <file>images/space-bg.gif</file>
+        <file>cfg/config.ini</file>
+        <file>images/destroy.gif</file>
     </qresource>
 </RCC>

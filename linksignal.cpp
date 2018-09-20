@@ -1,3 +1,4 @@
+#include "linksignal.h"
 #include "const.h"
 
 void LinkSignal::destroy(int var)
@@ -45,6 +46,16 @@ void LinkSignal::sendToServerGet()
 void LinkSignal::sendToServerSet()
 {
     emit signalSendToServerSet();
+}
+
+void LinkSignal::speedEnemySpaceshipSet(int speedEnemySpaceShip)
+{
+    emit signalSpeedEnemySpaceshipSet(speedEnemySpaceShip);
+}
+
+void LinkSignal::speedAsteroidSet(int speedAsteroid)
+{
+    emit signalSpeedAsteroidSet(speedAsteroid);
 }
 
 LinkSignal &LinkSignal::Instance()

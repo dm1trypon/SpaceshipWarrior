@@ -1,13 +1,8 @@
-#include "const.h"
+#include "client.h"
+#include "linksignal.h"
 
-#include <QPushButton>
-#include <QVBoxLayout>
-#include <QLabel>
-#include <QTime>
-#include <QTcpSocket>
-#include <QJsonArray>
-#include <QJsonObject>
 #include <QJsonDocument>
+#include <QJsonObject>
 #include <QMessageBox>
 
 Client::Client(const QString &strHost, int nPort, QWidget *parent) : QWidget (parent), m_nNextBlockSize(0)
@@ -37,7 +32,6 @@ QString Client::addToJson(QString str)
 void Client::slotLineEditText(QString lineEditText)
 {
     _lineEditText = lineEditText;
-    qDebug() << "NICKNAME:" << _lineEditText;
 }
 
 void Client::slotEndGameCheck(bool endGame)
@@ -66,23 +60,18 @@ void Client::insertDataReadyRead(QString str)
 {
     QJsonDocument jsonDoc = QJsonDocument::fromJson(str.toUtf8());
     QJsonObject jsObj = jsonDoc.object();
-    QMap<int, QString> map;
-    foreach(const QString& key, jsObj.keys())
+    QMultiMap<int, QString> map;
+    foreach(const QString& nickName, jsObj.keys())
     {
-        QJsonValue value = jsObj.value(key);
-        int valueInt = value.toString().toInt();
-        map.insert(valueInt, key);
-        if (lastMapValue < valueInt)
-        {
-            lastMapValue = valueInt;
-        }
+        QJsonValue nickNameScore = jsObj.value(nickName);
+        map.insert(nickNameScore.toString().toInt(), nickName);
     }
-    QMap<int, QString>::const_iterator i = map.constEnd();
-    do {
-        --i;
-        QString textLine = i.value() + " : " + QString::number(i.key());
-        LinkSignal::Instance().descriptionEndGame(textLine);
-    } while (i != map.constBegin());
+    QMultiMap<int, QString>::const_iterator i = map.constEnd();
+        do {
+            --i;
+            QString textLine = i.value() + " : " + QString::number(i.key());
+            LinkSignal::Instance().descriptionEndGame(textLine);
+        } while (i != map.constBegin());
 }
 
 void Client::slotGetScore(int score)

@@ -1,10 +1,26 @@
+#include "enemyspaceship.h"
 #include "const.h"
+#include "linksignal.h"
 
-EnemySpaceship::EnemySpaceship(qreal xspread) : QGraphicsPixmapItem (nullptr)
+#include <QWidget>
+#include <QDebug>
+
+EnemySpaceship::EnemySpaceship(qreal xspread) : QObject(), QGraphicsPixmapItem (nullptr)
 {
     setPixmap(QPixmap(":/images/spaceship-big.png"));
-    qreal post = rand() % static_cast<int>(xspread - pixmap().width());
-    setPos(post, SCREEN_TOP);
+    srand(static_cast<uint>(time(nullptr)));
+    setPos(getRandomWidth(xspread), SCREEN_TOP);
+    connect(&LinkSignal::Instance(), SIGNAL(signalSpeedEnemySpaceshipSet(int)), this, SLOT(speedEnemySpaceshipSet(int)));
+}
+
+qreal EnemySpaceship::getRandomWidth(qreal xspread)
+{
+    return rand() % static_cast<int>(xspread - pixmap().width());
+}
+
+void EnemySpaceship::speedEnemySpaceshipSet(int speedEnemySpaceship)
+{
+    yspeed = speedEnemySpaceship;
 }
 
 void EnemySpaceship::advance(int phase)
@@ -13,7 +29,6 @@ void EnemySpaceship::advance(int phase)
         return;
     }
     moveBy(xspeed, yspeed);
-
     if (!onScreen()) {
         destroy(ENDGAME);
     }

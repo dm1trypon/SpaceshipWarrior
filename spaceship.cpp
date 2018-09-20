@@ -1,4 +1,10 @@
 #include "const.h"
+#include "spaceship.h"
+#include "bullet.h"
+#include "linksignal.h"
+
+#include <QKeyEvent>
+#include <QGraphicsScene>
 
 void Spaceship::endGameMessageSpaceship(int var)
 {
@@ -50,10 +56,10 @@ void Spaceship::moveSpaceship()
 void Spaceship::stabilizeMoveSpaceship()
 {
     if (onWidthScreen(LEFT)) {
-        this->setPos(SCREEN_WIDTH_END - 1, SCREEN_HEIGHT - 200 - pixmap().height());
+        this->setPos(SCREEN_WIDTH_END - 1, SCREEN_HEIGHT - pixmap().height());
     }
     if (onWidthScreen(RIGHT)) {
-        this->setPos(SCREEN_WIDTH_BEGIN + 1, SCREEN_HEIGHT - 200 - pixmap().height());
+        this->setPos(SCREEN_WIDTH_BEGIN + 1, SCREEN_HEIGHT - pixmap().height());
     }
 }
 

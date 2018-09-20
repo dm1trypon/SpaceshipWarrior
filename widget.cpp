@@ -1,23 +1,23 @@
 #include "ui_widget.h"
 #include "const.h"
+#include "widget.h"
+#include "linksignal.h"
 
-#include <QTime>
-#include <QTcpSocket>
-#include <QJsonArray>
-#include <QJsonObject>
-#include <QJsonDocument>
-#include <QMessageBox>
-#include <QMap>
-#include <QList>
+#include <QTimer>
+#include <QGraphicsProxyWidget>
+#include <QWidget>
+#include <QKeyEvent>
+#include <QPushButton>
+#include <QLabel>
+#include <QLineEdit>
+#include <QFile>
+#include <QStringList>
 
-Widget::Widget(const QString &strHost, int nPort, QWidget *parent) :
+Widget::Widget(QWidget *parent) :
     QWidget(parent),
-     m_nNextBlockSize(0),
     ui(new Ui::Widget)
 {
     ui->setupUi(this);
-    m_pTcpSocket = new QTcpSocket(this);
-    m_pTcpSocket->connectToHost(strHost, static_cast<quint16>(nPort));
     createScene();
     timers(startGame);
     createNameLineEdit();
@@ -37,6 +37,7 @@ void Widget::connections()
     connect(animationTimer, SIGNAL(timeout()), scene, SLOT(advance()));
     connect(generatorTimerAsteroid, SIGNAL(timeout()), this, SLOT(onGenerateAsteroid()));
     connect(generatorTimerEnemySpaceship, SIGNAL(timeout()), this, SLOT(onGenerateEnemySpaceship()));
+    connect(animationDestroyTimer, SIGNAL(timeout()), this, SLOT(slotStopAnimationDestroySpaceships()));
     connect(sceneHideTimer, SIGNAL(timeout()), this, SLOT(stopGame()));
     connect(&LinkSignal::Instance(), SIGNAL(signalEndGameMessage()), this, SLOT(endGameMessage()));
     connect(&LinkSignal::Instance(), SIGNAL(signalDestroy()), this, SLOT(sumScore()));
@@ -67,6 +68,7 @@ void Widget::createScene()
 void Widget::timers(bool startGame)
 {
     animationTimer = new QTimer(this);
+    animationDestroyTimer = new QTimer(this);
     generatorTimerAsteroid = new QTimer(this);
     generatorTimerEnemySpaceship = new QTimer(this);
     sceneHideTimer = new QTimer(this);
@@ -117,12 +119,18 @@ void Widget::descriptionEndGame(int size, QString fontType, QString textData, QC
 
 void Widget::endGameMessage()
 {
-    if (!endGame) {
+    if (!endGame)
+    {
         return;
     }
     descriptionEndGame(80, "Unispace", "YOU LOSE!", Qt::yellow, 110, 210);
     endGame = false;
     LinkSignal::Instance().endGameCheck(endGame);
+    if(this->_spaceship != nullptr)
+    {
+        slotStartAnimationDestroySpaceships(static_cast<int>(this->_spaceship->x()), static_cast<int>(this->_spaceship->y()), this->_spaceship->pixmap().width(), this->_spaceship->pixmap().height());
+        scene->removeItem(this->_spaceship);
+    }
     sceneHideTimer->start(TIME_HIDE_SCENE);
 }
 
@@ -130,18 +138,27 @@ void Widget::onGenerateAsteroid()
 {
     this->_asteroid = new Asteroid(scene->sceneRect().width());
     scene->addItem(_asteroid);
+    LinkSignal::Instance().speedAsteroidSet(speedAsteroid);
 }
 
 void Widget::onGenerateEnemySpaceship()
 {
     this->_enemySpaceship = new EnemySpaceship(scene->sceneRect().width());
     scene->addItem(_enemySpaceship);
+    LinkSignal::Instance().speedEnemySpaceshipSet(speedEnemySpaceShip);
 }
 
 void Widget::sumScore()
 {
     _score++;
     LinkSignal::Instance().getScore(_score);
+    if (_score % 20 == 0)
+    {
+        speedAsteroid++;
+        speedEnemySpaceShip++;
+        LinkSignal::Instance().speedAsteroidSet(speedAsteroid);
+        LinkSignal::Instance().speedEnemySpaceshipSet(speedEnemySpaceShip);
+    }
     score->setPlainText(QString::number(_score));
 }
 
@@ -236,7 +253,6 @@ void Widget::newGame()
 void Widget::clearScene()
 {
     QList<QGraphicsItem*> list = scene->items();
-    qDebug() << list;
     for(int i = 0; i < list.length(); i++)
     {
         scene->removeItem(list[i]);
@@ -249,11 +265,42 @@ void Widget::lifeChangerEnemySpaceship()
     if (!life)
     {
         life = 3;
+        slotStartAnimationDestroySpaceships(spaceshipsGetX(), spaceshipsGetY(), this->_enemySpaceship->pixmap().width(), this->_enemySpaceship->pixmap().height());
         delete this->_enemySpaceship;
         sumScore();
         return;
     }
     reinicializateEnemySpaceship();
+}
+
+void Widget::slotStopAnimationDestroySpaceships()
+{
+    destroyMovie->stop();
+    animationDestroyTimer->stop();
+}
+
+void Widget::slotStartAnimationDestroySpaceships(int _enemySpaceShipX, int _enemySpaceShipY, int pixmapWidth, int pixmapHeight)
+{
+    animationDestroyLabel = new QLabel();
+    animationDestroyLabel->setGeometry(QRect(QPoint(_enemySpaceShipX, _enemySpaceShipY), QSize(pixmapWidth, pixmapHeight)));
+    destroyMovie = new QMovie(":/images/destroy.gif");
+    proxy = scene->addWidget(animationDestroyLabel);
+    animationDestroyLabel->setAttribute(Qt::WA_NoSystemBackground);
+    animationDestroyLabel->setMovie(destroyMovie);
+    proxy->setWidget(animationDestroyLabel);
+    destroyMovie->setScaledSize(QSize(pixmapWidth, pixmapHeight));
+    animationDestroyTimer->start(TIME_ANIMATION);
+    destroyMovie->start();
+}
+
+int Widget::spaceshipsGetX()
+{
+    return static_cast<int>(this->_enemySpaceship->x());
+}
+
+int Widget::spaceshipsGetY()
+{
+    return static_cast<int>(this->_enemySpaceship->y());
 }
 
 void Widget::reinicializateEnemySpaceship()

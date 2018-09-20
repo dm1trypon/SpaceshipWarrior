@@ -25,12 +25,12 @@ CONFIG += c++11
 SOURCES += \
         main.cpp \
         widget.cpp \
-    asteroid.cpp \
     spaceship.cpp \
     bullet.cpp \
     linksignal.cpp \
     enemyspaceship.cpp \
-    client.cpp
+    client.cpp \
+    asteroid.cpp
 
 HEADERS += \
         widget.h \

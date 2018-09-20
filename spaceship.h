@@ -1,16 +1,16 @@
 #ifndef SPACESHIP_H
 #define SPACESHIP_H
 
-#include <QGraphicsPixmapItem>
-
 #include "asteroid.h"
 #include "enemyspaceship.h"
+
+#include <QGraphicsPixmapItem>
 
 class Spaceship : public QGraphicsPixmapItem
 {
 private:
     int xspeed = 0;
-    int spaceshipSpeed = 6;
+    int spaceshipSpeed = 7;
     bool onWidthScreen(int var);
     bool objectDefinition(Asteroid* objAsteroid, EnemySpaceship* objEnemySpaceship);
     bool collision();

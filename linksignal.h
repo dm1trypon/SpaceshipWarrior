@@ -19,8 +19,12 @@ public:
     void endGameCheck(bool endGame);
     void sendToServerGet();
     void sendToServerSet();
+    void speedEnemySpaceshipSet(int speedEnemySpaceShip);
+    void speedAsteroidSet(int speedAsteroid);
     static LinkSignal& Instance();
 signals:
+    void signalSpeedAsteroidSet(int speedAsteroid);
+    void signalSpeedEnemySpaceshipSet(int speedEnemySpaceship);
     void signalDestroy();
     void signalEndGameCheck(bool endGame);
     void signalLineEditText(QString lineEditText);

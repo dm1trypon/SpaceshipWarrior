@@ -1,4 +1,8 @@
+#include "bullet.h"
 #include "const.h"
+
+#include <QBrush>
+#include <QPen>
 
 Bullet::Bullet(QPointF initPos, QGraphicsItem *parent) : QGraphicsLineItem (parent)
 {
