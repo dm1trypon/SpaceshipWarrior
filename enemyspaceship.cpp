@@ -4,6 +4,7 @@
 
 #include <QWidget>
 #include <QDebug>
+#include <QTimer>
 
 EnemySpaceship::EnemySpaceship(qreal xspread) : QObject(), QGraphicsPixmapItem (nullptr)
 {
@@ -11,6 +12,9 @@ EnemySpaceship::EnemySpaceship(qreal xspread) : QObject(), QGraphicsPixmapItem (
     srand(static_cast<uint>(time(nullptr)));
     setPos(getRandomWidth(xspread), SCREEN_TOP);
     connect(&LinkSignal::Instance(), SIGNAL(signalSpeedEnemySpaceshipSet(int)), this, SLOT(speedEnemySpaceshipSet(int)));
+    moveEnemySpaceShipXTimer = new QTimer(this);
+    connect(moveEnemySpaceShipXTimer, SIGNAL( timeout()), this, SLOT(setMoveX()));
+    moveEnemySpaceShipXTimer->start(1000);
 }
 
 qreal EnemySpaceship::getRandomWidth(qreal xspread)
@@ -18,9 +22,22 @@ qreal EnemySpaceship::getRandomWidth(qreal xspread)
     return rand() % static_cast<int>(xspread - pixmap().width());
 }
 
+void EnemySpaceship::setMoveX()
+{
+    switch (xspeed)
+    {
+    case 2:
+        xspeed -= 4;
+        break;
+    case -2:
+        xspeed += 4;
+        break;
+    }
+}
+
 void EnemySpaceship::speedEnemySpaceshipSet(int speedEnemySpaceship)
 {
-    yspeed = speedEnemySpaceship;
+    yspeed = speedEnemySpaceship;;
 }
 
 void EnemySpaceship::advance(int phase)

@@ -56,6 +56,7 @@ private:
     QTimer* generatorTimerEnemySpaceship;
     QTimer* sceneHideTimer;
     QTimer* animationDestroyTimer;
+    QTimer* moveEnemySpaceShipXTimer;
     QLabel* animationDestroyLabel;
     QMovie* destroyMovie;
     QGraphicsProxyWidget* proxy;
@@ -65,7 +66,8 @@ private:
     int _score = 0;
     int life = 3;
     int speedAsteroid= 2;
-    int speedEnemySpaceShip = 1;
+    int speedEnemySpaceship = 1;
+    int moveEnemySpaceshipX = -1;
     int yLeadersLineStep = 100;
     int spaceshipsGetX();
     int spaceshipsGetY();

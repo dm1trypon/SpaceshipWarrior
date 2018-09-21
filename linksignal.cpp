@@ -18,6 +18,11 @@ void LinkSignal::destroy(int var)
     }
 }
 
+//void LinkSignal::setMoveEnemySpaceshipX(int moveEnemySpaceshipX)
+//{
+//    emit signalSetMoveEnemySpaceshipX(moveEnemySpaceshipX);
+//}
+
 void LinkSignal::descriptionEndGame(QString textLine)
 {
     emit signalDescriptionEndGame(textLine);

@@ -69,6 +69,7 @@ void Widget::timers(bool startGame)
 {
     animationTimer = new QTimer(this);
     animationDestroyTimer = new QTimer(this);
+//    moveEnemySpaceShipXTimer = new QTimer(this);
     generatorTimerAsteroid = new QTimer(this);
     generatorTimerEnemySpaceship = new QTimer(this);
     sceneHideTimer = new QTimer(this);
@@ -145,7 +146,7 @@ void Widget::onGenerateEnemySpaceship()
 {
     this->_enemySpaceship = new EnemySpaceship(scene->sceneRect().width());
     scene->addItem(_enemySpaceship);
-    LinkSignal::Instance().speedEnemySpaceshipSet(speedEnemySpaceShip);
+    LinkSignal::Instance().speedEnemySpaceshipSet(speedEnemySpaceship);
 }
 
 void Widget::sumScore()
@@ -155,9 +156,9 @@ void Widget::sumScore()
     if (_score % 20 == 0)
     {
         speedAsteroid++;
-        speedEnemySpaceShip++;
+        speedEnemySpaceship++;
         LinkSignal::Instance().speedAsteroidSet(speedAsteroid);
-        LinkSignal::Instance().speedEnemySpaceshipSet(speedEnemySpaceShip);
+        LinkSignal::Instance().speedEnemySpaceshipSet(speedEnemySpaceship);
     }
     score->setPlainText(QString::number(_score));
 }
@@ -266,7 +267,8 @@ void Widget::lifeChangerEnemySpaceship()
     {
         life = 3;
         slotStartAnimationDestroySpaceships(spaceshipsGetX(), spaceshipsGetY(), this->_enemySpaceship->pixmap().width(), this->_enemySpaceship->pixmap().height());
-        delete this->_enemySpaceship;
+        scene->removeItem(this->_enemySpaceship);
+        //delete this->_enemySpaceship;
         sumScore();
         return;
     }

@@ -13,10 +13,12 @@ public:
     int type() const;
 private slots:
     void speedEnemySpaceshipSet(int speedEnemySpace);
+    void setMoveX();
 private:
+    QTimer* moveEnemySpaceShipXTimer;
     bool check = true;
     int yspeed = 1;
-    int xspeed = 0;
+    int xspeed = -2;
     bool change = false;
     bool onScreen();
     bool collision();

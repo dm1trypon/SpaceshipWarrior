@@ -12,6 +12,8 @@ private:
     LinkSignal& operator=(const LinkSignal&) = delete;
 
 public:
+    //void setMoveEnemySpaceshipX(int moveEnemySpaceshipX);
+    void destroyAsteroid();
     void destroy(int var);
     void descriptionEndGame(QString textLine);
     void getScore(int score);
@@ -23,6 +25,8 @@ public:
     void speedAsteroidSet(int speedAsteroid);
     static LinkSignal& Instance();
 signals:
+    //void signalSetMoveEnemySpaceshipX(int moveEnemySpaceshipX);
+    void signalDestroyAsteroid();
     void signalSpeedAsteroidSet(int speedAsteroid);
     void signalSpeedEnemySpaceshipSet(int speedEnemySpaceship);
     void signalDestroy();
